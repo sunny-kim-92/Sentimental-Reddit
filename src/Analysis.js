@@ -4,13 +4,12 @@ import { Bar } from "react-chartjs-2";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 
-// const AYLIENTextAPI = require("aylien_textapi");
 const _ = require("lodash");
 const axios = require("axios");
 const Sentiment = require("sentiment");
 const cheerio = require("cheerio");
 const rp = require("request-promise");
-const sentiment = new Sentiment()
+const sentiment = new Sentiment();
 
 export default class Analysis extends Component {
   constructor(props) {
@@ -85,12 +84,12 @@ export default class Analysis extends Component {
       return finalArr;
     };
 
-      let temp = this.props.url
-      let update = temp.replace(/www.reddit.com/gi,"old.reddit.com")
-      let final = update.replace(/^reddit.com/gi,"old.reddit.com")
+    let temp = this.props.url;
+    let update = temp.replace(/www.reddit.com/gi, "old.reddit.com");
+    let final = update.replace(/^reddit.com/gi, "old.reddit.com");
 
     //Declare options for request-promise scraping call
-    rp("https://cors-anywhere.herokuapp.com/" + final,{
+    rp("https://cors-anywhere.herokuapp.com/" + final, {
       // "accept":
       //   "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
       // "accept-encoding": "gzip, deflate, br",
@@ -101,29 +100,25 @@ export default class Analysis extends Component {
       // "user-agent":
       //   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
     })
-    .then((response) => {
-      let final = cheerio.load(response)
-      return final
-    })
+      .then(response => {
+        let final = cheerio.load(response);
+        return final;
+      })
 
-    //Begins promise chain, returns array of comment URLs
-    // rp(options)
+      //Begins promise chain, returns array of comment URLs
+      // rp(options)
       .then($ => {
         let linkArr = [];
         let scoreArr = [];
-        $(`a.bylink.comments.may-blank`).attr(
-          `href`,
-          (i, val) => {
-            linkArr.push(val);
-          }
-        );
+        $(`a.bylink.comments.may-blank`).attr(`href`, (i, val) => {
+          linkArr.push(val);
+        });
 
         $(`.score.unvoted`).attr(`title`, (i, val) => {
-          if (val === undefined){
-            scoreArr.push("0")
-          }
-          else{
-          scoreArr.push(val)
+          if (val === undefined) {
+            scoreArr.push("0");
+          } else {
+            scoreArr.push(val);
           }
         });
 
@@ -155,88 +150,88 @@ export default class Analysis extends Component {
           titleObj[keyTitle] = phrase;
           this.setState(titleObj);
           // Recursively unnests comments and sets state
-                axios
-                  .get(str + ".json")
-                  .then(res => {
-                    const elements = res.data[1].data.children;
-                    let str = _.flattenDeep(getComments(elements));
-                    str = str.join(" ");
-                    let stateObj = {}
-                    let commentKey = 'comments' + index
-                    stateObj[commentKey] = str.slice(0, 75) + '...'
-                    this.setState(stateObj)
-                    return str;
-                  })
-                  //Finds Azure score
-                  // .then((str) => {
-                  //   let accessKey = "f420e632e0de48a3a32861c44ca66d5d";
+          axios
+            .get(str + ".json")
+            .then(res => {
+              const elements = res.data[1].data.children;
+              let str = _.flattenDeep(getComments(elements));
+              str = str.join(" ");
+              let stateObj = {};
+              let commentKey = "comments" + index;
+              stateObj[commentKey] = str.slice(0, 75) + "...";
+              this.setState(stateObj);
+              return str;
+            })
+            //Finds Azure score
+            // .then((str) => {
+            //   let accessKey = "f420e632e0de48a3a32861c44ca66d5d";
 
-                  //   let uri = "eastus.api.cognitive.microsoft.com";
-                  //   let pathScore = "/text/analytics/v2.0/sentiment";
-                  //   let pathPhrases = "/text/analytics/v2.0/keyPhrases";
+            //   let uri = "eastus.api.cognitive.microsoft.com";
+            //   let pathScore = "/text/analytics/v2.0/sentiment";
+            //   let pathPhrases = "/text/analytics/v2.0/keyPhrases";
 
-                  //   let response_handler_score = response => {
-                  //     let bodyScore = "";
-                  //     response.on("data", d => {
-                  //       bodyScore += d;
-                  //       let strScore = bodyScore.substring(23, 30);
-                  //       strScore = strScore.replace(/[^\d.-]/g, "");
-                  //       let score = Math.round((+strScore - 0.5) * 2000) / 1000 + 0.0001;
-                  //       let key = "azureScore" + index;
-                  //       let stateObj = {};
-                  //       stateObj[key] = score;
-                  //       this.setState(stateObj);
-                  //     });
-                  //     response.on("error", e => {
-                  //       console.log("Error: " + e.message);
-                  //     });
-                  //   };
+            //   let response_handler_score = response => {
+            //     let bodyScore = "";
+            //     response.on("data", d => {
+            //       bodyScore += d;
+            //       let strScore = bodyScore.substring(23, 30);
+            //       strScore = strScore.replace(/[^\d.-]/g, "");
+            //       let score = Math.round((+strScore - 0.5) * 2000) / 1000 + 0.0001;
+            //       let key = "azureScore" + index;
+            //       let stateObj = {};
+            //       stateObj[key] = score;
+            //       this.setState(stateObj);
+            //     });
+            //     response.on("error", e => {
+            //       console.log("Error: " + e.message);
+            //     });
+            //   };
 
-                  //   let get_sentiments = documents => {
-                  //     let bodyScore = JSON.stringify(documents);
+            //   let get_sentiments = documents => {
+            //     let bodyScore = JSON.stringify(documents);
 
-                  //     let request_params_score = {
-                  //       method: "POST",
-                  //       hostname: uri,
-                  //       path: pathScore,
-                  //       headers: {
-                  //         "Ocp-Apim-Subscription-Key": accessKey
-                  //       }
-                  //     };
-                  //     let reqScore = https.request(
-                  //       request_params_score,
-                  //       response_handler_score
-                  //     );
-                  //     reqScore.write(bodyScore);
-                  //     reqScore.end();
-                  //   };
-                  //   let documents = {
-                  //     documents: [
-                  //       { id: "1", language: "en", text: str.substring(0, 5000) }
-                  //     ]
-                  //   };
-                  //   get_sentiments(documents);
-                  //   return str;
-                  // })
-                  //Finds Sliwinski score
-                  .then((str) => {
-                    let r1 = sentiment.analyze(str)
-                    let keyScore = "textAPIScore" + index;
-                    let apiObj = {};
-                    let score = Math.round(+r1.comparative * 8000) / 1000 + 0.000001;
-                    if (Math.abs(score) > 1) {
-                      if (score > 1) {
-                        score = 1;
-                      } else {
-                        score = -1;
-                      }
-                    }
-                    apiObj[keyScore] = score;
-                    let keyWords = "words" + index;
-                    apiObj[keyWords] = r1.tokens.length;
-                    console.dir(r1)
-                    this.setState(apiObj);
-                  });
+            //     let request_params_score = {
+            //       method: "POST",
+            //       hostname: uri,
+            //       path: pathScore,
+            //       headers: {
+            //         "Ocp-Apim-Subscription-Key": accessKey
+            //       }
+            //     };
+            //     let reqScore = https.request(
+            //       request_params_score,
+            //       response_handler_score
+            //     );
+            //     reqScore.write(bodyScore);
+            //     reqScore.end();
+            //   };
+            //   let documents = {
+            //     documents: [
+            //       { id: "1", language: "en", text: str.substring(0, 5000) }
+            //     ]
+            //   };
+            //   get_sentiments(documents);
+            //   return str;
+            // })
+            //Finds Sliwinski score
+            .then(str => {
+              let r1 = sentiment.analyze(str);
+              let keyScore = "textAPIScore" + index;
+              let apiObj = {};
+              let score = Math.round(+r1.comparative * 8000) / 1000 + 0.000001;
+              if (Math.abs(score) > 1) {
+                if (score > 1) {
+                  score = 1;
+                } else {
+                  score = -1;
+                }
+              }
+              apiObj[keyScore] = score;
+              let keyWords = "words" + index;
+              apiObj[keyWords] = r1.tokens.length;
+              console.dir(r1);
+              this.setState(apiObj);
+            });
         });
       });
   }
@@ -468,8 +463,7 @@ export default class Analysis extends Component {
 
     return (
       <div className="App">
-        {
-        this.state.textAPIScore0 &&
+        {this.state.textAPIScore0 &&
         this.state.textAPIScore1 &&
         this.state.textAPIScore2 ? (
           <div>
@@ -505,11 +499,13 @@ export default class Analysis extends Component {
         ) : (
           <div className="centered">
             <h1>Hold On, We're Going Home...</h1>
-            <img alt='snoo-gif' src="http://i0.kym-cdn.com/photos/images/original/000/919/288/57b.gif" />
+            <img
+              alt="snoo-gif"
+              src="http://i0.kym-cdn.com/photos/images/original/000/919/288/57b.gif"
+            />
           </div>
         )}
       </div>
     );
   }
 }
-
