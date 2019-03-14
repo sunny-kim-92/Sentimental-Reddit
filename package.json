@@ -1,37 +1,20 @@
 {
-  "name": "sentimental-reddit",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "axios": "^0.18.0",
-    "aylien_textapi": "^0.7.0",
-    "chart.js": "^2.7.3",
-    "cheerio": "^1.0.0-rc.2",
-    "https": "^1.0.0",
-    "lodash": "^4.17.11",
-    "react": "^16.8.4",
-    "react-bootstrap": "^1.0.0-beta.5",
-    "react-chartjs-2": "^2.7.4",
-    "react-dom": "^16.8.4",
-    "react-scripts": "2.1.8",
-    "react-table": "^6.9.2",
-    "request-promise": "^4.2.4",
-    "sentiment": "^5.0.1",
-    "typescript": "^3.3.3333"
-  },
+  "name": "example-create-react-app-express",
+  "version": "1.0.0",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "client": "cd client && yarn start",
+    "server": "nodemon server.js",
+    "dev": "concurrently --kill-others-on-fail \"yarn server\" \"yarn client\""
   },
-  "eslintConfig": {
-    "extends": "react-app"
+  "dependencies": {
+    "aylien_textapi": "^0.7.0",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4"
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ]
+  "devDependencies": {
+    "concurrently": "^4.0.1",
+    "grunt-connect-proxy": "git+https://github.com/drewzboto/grunt-connect-proxy.git"
+  }
 }
